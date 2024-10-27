@@ -5,28 +5,13 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.cluster import KMeans
 from sklearn.impute import SimpleImputer
 from sklearn.decomposition import PCA
-
+from sklearn.metrics import silhouette_score
 # Load the data from Kaggle
 data = pd.read_csv('./datasets/marketing_campaign.csv', sep='\t', engine='python')
 
-# Identify categorical columns
-categorical_cols = data.select_dtypes(include=['object']).columns.tolist()
-
-# Impute missing values for categorical and numerical columns
-cat_imputer = SimpleImputer(strategy='most_frequent')
-data[categorical_cols] = cat_imputer.fit_transform(data[categorical_cols])
-
-# For numerical columns, use the mean
-num_cols = data.select_dtypes(include=[np.number]).columns.tolist()
-num_imputer = SimpleImputer(strategy='mean')
-data[num_cols] = num_imputer.fit_transform(data[num_cols])
-
-# Convert categorical columns to numeric using one-hot encoding
-data_encoded = pd.get_dummies(data, columns=categorical_cols)
-
 # Separate features and target variable
-X = data_encoded.iloc[:, :-1]  # Assuming the last column is the target
-y = data_encoded.iloc[:, -1]
+X = data.iloc[:,9:14]  # Assuming the last column is the target
+y = data.iloc[:, 14]
 
 # Scale the features
 scaler = StandardScaler()
@@ -47,7 +32,7 @@ plt.ylabel('WCSS')
 plt.title('Elbow Graph value of K')
 plt.show()
 
-optimal_k = 13  # Replace with the value found from the elbow method
+optimal_k = 2  # Replace with the value found from the elbow method
 kmeans = KMeans(n_clusters=optimal_k, init='k-means++', random_state=42)
 kmeans.fit(X_scaled)
 
@@ -66,3 +51,7 @@ plt.xlabel('PCA Component 1')
 plt.ylabel('PCA Component 2')
 plt.colorbar(label='Cluster')
 plt.show()
+
+# printing Silhoette score for checking efficiency of the model
+silhouette_avg = silhouette_score(X_scaled, kmeans.labels_)
+print(f'Silhouette Score for {optimal_k} clusters: {silhouette_avg:.2f}')
