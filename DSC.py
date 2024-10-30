@@ -41,7 +41,7 @@ y_pred = kmeans.predict(X_scaled)  # Predicting on the scaled data
 
 # Using PCA to reduce dimensions for visualization
 pca = PCA(n_components=2)  # Reduce to 2 dimensions
-X_pca = pca.fit_transform(X_scaled)  # Apply PCA to the scaled features
+X_pca = pca.fit_transform(X_scaled) 
 
 # Plotting the clusters
 plt.figure(figsize=(10, 6))
